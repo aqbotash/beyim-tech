@@ -39,4 +39,12 @@ class IELTSTest(models.Model):
     participant_id = models.ForeignKey(Student, on_delete=models.CASCADE)
 
 
+class Activity(models.Model):
+    id = models.AutoField(primary_key=True)
+    date = models.DateField()
+    name = models.CharField(max_length=100)
+    participants = models.ManyToManyField(Student)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
     
