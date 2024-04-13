@@ -13,12 +13,6 @@ class CostomUser(AbstractUser):
     def __str__(self):
         return self.username
 
-
-
-
-
-
-
 class IELTSTest(models.Model):
     id = models.AutoField(primary_key=True)
     date = models.DateField()
