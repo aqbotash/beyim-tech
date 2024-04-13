@@ -39,7 +39,7 @@ class MockTestResult(models.Model):
     overall_band_score = models.DecimalField(max_digits=5, decimal_places=2) 
  
 class LearningActivity(models.Model): 
-    name = models.Choices('Listening', 'Reading', 'Writing', 'Speaking')
+    name = models.CharField(max_length=100)
     description = models.TextField() 
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE) 
     duration = models.DurationField() 
