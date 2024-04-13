@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import IELTSTest, CustomUser
+from .models import IELTSTest, CustomUser, Student
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,4 +16,8 @@ class IELTSTestSerializer(serializers.ModelSerializer):
     class Meta:
         model = IELTSTest
         fields = '__all__'
-        
+
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'        

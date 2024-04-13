@@ -7,7 +7,6 @@ class CustomUser(AbstractUser):
         ('parent', 'parent'),
         ('techer', 'techer')
     )
-    id = models.AutoField(primary_key=True)
     category = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
 
     def __str__(self):
@@ -17,12 +16,12 @@ class Teacher(CustomUser):
     lessons = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.name
+        return self.username
 
 class Parent(CustomUser):
     payments = models.FloatField()
     def __str__(self):
-        return self.name
+        return self.username
 
 class Student(CustomUser):
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
