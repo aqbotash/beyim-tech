@@ -4,7 +4,10 @@ from .serializers import *
 from .permissions import * 
 from rest_framework.permissions import IsAuthenticated 
 from .permissions import IsStudent, IsTeacher 
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
      
 import openai
 # import environ
@@ -12,6 +15,25 @@ import openai
 # env = environ.Env()
 openai.api_key = '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'
 
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+class RegisterAPIView(generics.CreateAPIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+
+    def perform_create(self, serializer):
+        password = serializer.validated_data['password']
+        user = CustomUser.objects.create_user(
+            username=serializer.validated_data['username'],
+            email=serializer.validated_data['email'],
+            password=password, 
+        )
+        return user
+    
 def prompt_giver(input_file, replacements):
         prompt_dictionary = {}
 
