@@ -1,54 +1,48 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import Group, Permission
-# Create your models here.
-
-
-class CustomUser(AbstractUser):
-    ROLE_CHOICES = (
-        ('student', 'student'),
-        ('parent', 'parent'),
-        ('teacher', 'teacher')  # Fixed typo in role choice
-    )
-    category = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
-    groups = models.ManyToManyField(Group, related_name='custom_users')  # Added related_name argument
-    user_permissions = models.ManyToManyField(Permission, related_name='custom_users')  # Added related_name argument
-
-    def __str__(self):
-        return self.username
-
-class Teacher(CustomUser):
-    lessons = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.username
-
-class Parent(CustomUser):
-    payments = models.FloatField()
-    def __str__(self):
-        return self.username
-
-class Student(CustomUser):
-    guardian = models.ForeignKey(Parent, on_delete=models.CASCADE, related_name='students')
-    teachers = models.ManyToManyField(Teacher)
-
-
-class IELTSTest(models.Model):
-    id = models.AutoField(primary_key=True)
-    date = models.DateField()
-    reading_score = models.FloatField()
-    listening_score = models.FloatField()
-    speaking_score = models.FloatField()
-    writing_score = models.FloatField()
-    participant_id = models.ForeignKey(Student, on_delete=models.CASCADE)
-
-
-class Activity(models.Model):
-    id = models.AutoField(primary_key=True)
-    date = models.DateField()
-    name = models.CharField(max_length=100)
-    participants = models.ManyToManyField(Student)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.name
-    
+from django.db import models 
+from django.contrib.auth.models import AbstractUser 
+from django.contrib.auth.models import Group, Permission 
+ 
+class User(AbstractUser): 
+    groups = models.ManyToManyField(Group, related_name='api_users') 
+    user_permissions = models.ManyToManyField(Permission, related_name='api_users') 
+    is_student = models.BooleanField(default=False) 
+    is_teacher = models.BooleanField(default=False) 
+ 
+class Student(models.Model): 
+    user = models.OneToOneField(User, on_delete=models.CASCADE) 
+    debts = models.DecimalField(max_digits=5, decimal_places=2) 
+    join_date = models.DateField(auto_now_add=True) 
+    last_login = models.DateTimeField(auto_now=True) 
+ 
+class Teacher(models.Model): 
+    user = models.OneToOneField(User, on_delete=models.CASCADE) 
+    per_hour_fees = models.DecimalField(max_digits=5, decimal_places=2) 
+    students = models.ManyToManyField(Student, related_name='teachers', default=None) 
+    join_date = models.DateField(auto_now_add=True) 
+    last_login = models.DateTimeField(auto_now=True) 
+ 
+ 
+# Teachers first add mock tests and then add students to the mock tests 
+class MockTest(models.Model): 
+    name = models.CharField(max_length=255) 
+    id = models.IntegerField(primary_key=True) 
+    test_date = models.DateField() 
+ 
+     
+class MockTestResult(models.Model): 
+    student = models.ForeignKey(Student, on_delete=models.CASCADE) 
+    mock_test = models.ForeignKey('MockTest', on_delete=models.CASCADE) 
+    listening_score = models.DecimalField(max_digits=5, decimal_places=2) 
+    reading_score = models.DecimalField(max_digits=5, decimal_places=2) 
+    writing_score = models.DecimalField(max_digits=5, decimal_places=2) 
+    speaking_score = models.DecimalField(max_digits=5, decimal_places=2) 
+    overall_band_score = models.DecimalField(max_digits=5, decimal_places=2) 
+ 
+class LearningActivity(models.Model): 
+    # make it choice field 
+    name = models.CharField(max_length=255) 
+    description = models.TextField() 
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE) 
+    duration = models.DurationField() 
+    # teachers will add them 
+    students = models.ManyToManyField(Student, related_name='learning_activities')

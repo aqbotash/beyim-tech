@@ -1,0 +1,23 @@
+I am currently preparing for the IELTS exam and my scores for last exams are:
+1. Listening listening_score1/9
+    Reading reading_score1/9
+    Writing writing_score1/9
+    Speaking speaking_score1/9
+2. Listening listening_score2/9
+    Reading reading_score2/9
+    Writing writing_score2/9
+    Speaking speaking_score2/9
+3. Listening listening_score3/9
+    Reading reading_score3/9
+    Writing writing_score3/9
+    Speaking speaking_score3/9
+4. Listening listening_score4/9
+    Reading reading_score4/9
+    Writing writing_score4/9
+    Speaking speaking_score4/9
+5. Listening listening_score5/9
+    Reading reading_score5/9
+    Writing writing_score5/9
+    Speaking speaking_score5/9
+Help me find my weak skills and give detailed roadmap how to improve this skills. 
+Roadmap should contain detailed tasks for every day.

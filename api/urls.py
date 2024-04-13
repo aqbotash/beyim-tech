@@ -1,16 +1,26 @@
-from django.urls import path
-from .views import RegisterAPIView
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
-)
-
-
-urlpatterns = [
-    path('sign-up/', RegisterAPIView.as_view(), name='sign-up'),
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    
-    ]
+from django.urls import path 
+from .views import * 
+from rest_framework_simplejwt.views import TokenObtainPairView 
+ 
+ 
+urlpatterns = [ 
+    # URLs for Student 
+    path('token/', TokenObtainPairView.as_view(), name='student_token_obtain_pair'), 
+     
+    path('students/', StudentListCreateAPIView.as_view(), name='student-list'), 
+    path('students/<int:pk>/', StudentRetrieveUpdateDestroyAPIView.as_view(), name='student-detail'), 
+     
+    path('teachers/', TeacherListCreateAPIView.as_view(), name='teacher-list'), 
+    path('teachers/<int:pk>/', TeacherRetrieveUpdateDestroyAPIView.as_view(), name='teacher-detail'), 
+ 
+    path('mocktestresults/', MockTestResultCreateAPIView.as_view(), name='mocktestresult-list'), 
+    path('mocktestresults/', MockTestResultListAPIView.as_view(), name='mocktestresult-list'), 
+    path('mocktestresults/<int:pk>/', MockTestResultRetrieveUpdateDestroyAPIView.as_view(), name='mocktestresult-detail'), 
+ 
+    path('learningactivities/', LearningActivityCreateAPIView.as_view(), name='learningactivity-list'), 
+    path('learningactivities/', LearningActivityListAPIView.as_view(), name='learningactivity-list'), 
+    path('learningactivities/<int:pk>/', LearningActivityRetrieveUpdateDestroyAPIView.as_view(), name='learningactivity-detail'), 
+ 
+    path('mocktests/', MockTestListCreateAPIView.as_view(), name='mocktest-list'), 
+    path('mocktests/<int:pk>/', MockTestRetrieveUpdateDestroyAPIView.as_view(), name='mocktest-detail'), 
+]
