@@ -1,16 +1,29 @@
-from rest_framework import generics 
+from rest_framework import generics
 from .models import * 
 from .serializers import * 
 from .permissions import * 
 from rest_framework.permissions import IsAuthenticated 
 from .permissions import IsStudent, IsTeacher 
-from rest_framework import generics 
-from .models import * 
-from .serializers import * 
-from .permissions import * 
-from rest_framework.permissions import IsAuthenticated 
-from .permissions import IsStudent, IsTeacher 
+from rest_framework.response import Response
      
+import openai
+# import environ
+
+# env = environ.Env()
+openai.api_key = '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'
+
+def prompt_giver(input_file, replacements):
+        prompt_dictionary = {}
+
+        with open(input_file, 'r') as input_file:
+            modified_content = input_file.read()
+            for target_string, replacement_string in replacements.items():
+                modified_content = modified_content.replace(target_string, replacement_string)
+            
+            prompt_dictionary["user"] = modified_content
+
+        return prompt_dictionary["user"]
+
 class StudentListCreateAPIView(generics.ListCreateAPIView): 
     queryset = Student.objects.all() 
     serializer_class = StudentSerializer 
@@ -42,6 +55,39 @@ class MockTestResultCreateAPIView(generics.CreateAPIView):
     queryset = MockTestResult.objects.all() 
     serializer_class = MockTestResultSerializer 
     permission_classes = [IsAuthenticated, IsTeacher] 
+
+    def post(self, request, *args, **kwargs):
+        post_serializer = self.get_serializer(data=request.data)
+        if post_serializer.is_valid():
+            student_id = post_serializer.validated_data['student']
+            post_serializer.save()
+        
+        tests = self.queryset.filter(student=student_id)
+        get_serializer = self.get_serializer(tests, many=True)
+        list_of_data = get_serializer.data
+        replacements = {}
+        indx = len(list_of_data)
+        for i in range(1, 6):
+            replacements[f'listening_score{i}'] = list_of_data[indx - i]['listening_score'] 
+            replacements[f'reading_score{i}'] = list_of_data[indx - i]['reading_score'] 
+            replacements[f'speaking_score{i}'] = list_of_data[indx - i]['speaking_score'] 
+            replacements[f'writing_score{i}'] = list_of_data[indx - i]['writing_score'] 
+        
+        prompt = prompt_giver('main/prompts/prompt.txt', replacements)
+        
+        chat_response = openai.ChatCompletion.create(
+                model = "gpt-3.5-turbo",
+                messages = [
+                        {"role": "user", "content": prompt},
+                        ],
+                )
+        assistant_reply = chat_response['choices'][0]['message']['content']
+
+        tipsHistorySerializer = TipsHistorySerializer(data={'text': assistant_reply})
+        if tipsHistorySerializer.is_valid():
+            tipsHistorySerializer.save(user_id=student_id)
+
+        return Response(post_serializer.data)
  
 class MockTestResultRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView): 
     queryset = MockTestResult.objects.all() 

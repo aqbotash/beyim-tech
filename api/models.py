@@ -46,3 +46,7 @@ class LearningActivity(models.Model):
     duration = models.DurationField() 
     # teachers will add them 
     students = models.ManyToManyField(Student, related_name='learning_activities')
+
+class TipsHistory(models.Model):
+    user_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    text = models.TextField(null=True,blank=True)

@@ -39,3 +39,8 @@ class MockTestSerializer(serializers.ModelSerializer):
     class Meta: 
         model = MockTest 
         fields = '__all__'
+
+class TipsHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipsHistory
+        fields = '__all__'
