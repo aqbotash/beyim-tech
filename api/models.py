@@ -1,14 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import Group, Permission
 # Create your models here.
+
+
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ('student', 'student'),
         ('parent', 'parent'),
-        ('techer', 'techer')
+        ('teacher', 'teacher')  # Fixed typo in role choice
     )
     id = models.AutoField(primary_key=True)
     category = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
+    groups = models.ManyToManyField(Group, related_name='custom_users')  # Added related_name argument
+    user_permissions = models.ManyToManyField(Permission, related_name='custom_users')  # Added related_name argument
 
     def __str__(self):
         return self.username
@@ -25,7 +30,7 @@ class Parent(CustomUser):
         return self.name
 
 class Student(CustomUser):
-    parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
+    guardian = models.ForeignKey(Parent, on_delete=models.CASCADE, related_name='students')
     teachers = models.ManyToManyField(Teacher)
 
 
