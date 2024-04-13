@@ -2,20 +2,20 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser 
 from django.contrib.auth.models import Group, Permission 
  
-class User(AbstractUser): 
+class CustomUser(AbstractUser): 
     groups = models.ManyToManyField(Group, related_name='api_users') 
     user_permissions = models.ManyToManyField(Permission, related_name='api_users') 
     is_student = models.BooleanField(default=False) 
     is_teacher = models.BooleanField(default=False) 
  
 class Student(models.Model): 
-    user = models.OneToOneField(User, on_delete=models.CASCADE) 
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE) 
     debts = models.DecimalField(max_digits=5, decimal_places=2) 
     join_date = models.DateField(auto_now_add=True) 
     last_login = models.DateTimeField(auto_now=True) 
  
 class Teacher(models.Model): 
-    user = models.OneToOneField(User, on_delete=models.CASCADE) 
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE) 
     per_hour_fees = models.DecimalField(max_digits=5, decimal_places=2) 
     students = models.ManyToManyField(Student, related_name='teachers', default=None) 
     join_date = models.DateField(auto_now_add=True) 
