@@ -1,1 +1,1 @@
-web: poetry run gunicorn your_project_name.wsgi --log-file -
+python manage.py runserver
