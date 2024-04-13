@@ -6,7 +6,6 @@ class CustomUser(AbstractUser):
         ('student', 'student'),
         ('parent', 'parent'),
         ('techer', 'techer')
-        ('teacher', 'teacher')
     )
     id = models.AutoField(primary_key=True)
     category = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
