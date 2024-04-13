@@ -67,25 +67,26 @@ class MockTestResultCreateAPIView(generics.CreateAPIView):
         list_of_data = get_serializer.data
         replacements = {}
         indx = len(list_of_data)
-        for i in range(1, 6):
-            replacements[f'listening_score{i}'] = list_of_data[indx - i]['listening_score'] 
-            replacements[f'reading_score{i}'] = list_of_data[indx - i]['reading_score'] 
-            replacements[f'speaking_score{i}'] = list_of_data[indx - i]['speaking_score'] 
-            replacements[f'writing_score{i}'] = list_of_data[indx - i]['writing_score'] 
-        
-        prompt = prompt_giver('main/prompts/prompt.txt', replacements)
-        
-        chat_response = openai.ChatCompletion.create(
-                model = "gpt-3.5-turbo",
-                messages = [
-                        {"role": "user", "content": prompt},
-                        ],
-                )
-        assistant_reply = chat_response['choices'][0]['message']['content']
+        if(indx >= 5):
+            for i in range(1, 6):
+                replacements[f'listening_score{i}'] = list_of_data[indx - i]['listening_score'] 
+                replacements[f'reading_score{i}'] = list_of_data[indx - i]['reading_score'] 
+                replacements[f'speaking_score{i}'] = list_of_data[indx - i]['speaking_score'] 
+                replacements[f'writing_score{i}'] = list_of_data[indx - i]['writing_score']
+            
+            prompt = prompt_giver('main/prompts/prompt.txt', replacements)
+            
+            chat_response = openai.ChatCompletion.create(
+                    model = "gpt-3.5-turbo",
+                    messages = [
+                            {"role": "user", "content": prompt},
+                            ],
+                    )
+            assistant_reply = chat_response['choices'][0]['message']['content']
 
-        tipsHistorySerializer = TipsHistorySerializer(data={'text': assistant_reply})
-        if tipsHistorySerializer.is_valid():
-            tipsHistorySerializer.save(user_id=student_id)
+            tipsHistorySerializer = TipsHistorySerializer(data={'text': assistant_reply})
+            if tipsHistorySerializer.is_valid():
+                tipsHistorySerializer.save(user_id=student_id)
 
         return Response(post_serializer.data)
  
