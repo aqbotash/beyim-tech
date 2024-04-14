@@ -11,10 +11,11 @@ from rest_framework.permissions import AllowAny
 
 from openai import OpenAI
 
-client = OpenAI(api_key='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')
-# import environ
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-# env = environ.Env()
+client = OpenAI(api_key=os.getenv("API_KEY"))
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
